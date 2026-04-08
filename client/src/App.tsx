@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from './store';
@@ -14,7 +14,6 @@ import './App.css';
 
 function AppContent() {
     const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
-    const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [showAuthModal, setShowAuthModal] = useState(false);
@@ -66,7 +65,7 @@ function AppContent() {
 
 export default function App() {
     return (
-        <Router>
+        <Router basename={import.meta.env.BASE_URL}>
             <AppContent />
         </Router>
     );

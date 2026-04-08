@@ -1,4 +1,4 @@
--- Create users table
+-- 유저 계정 정보 테이블
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
@@ -7,16 +7,17 @@ CREATE TABLE users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create todo_lists table
+-- TODO 목록
 CREATE TABLE todo_lists (
   id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   title VARCHAR(255) NOT NULL,
+  list_order INTEGER DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create todos table
+-- TODO 안에 있는 할 일 목록
 CREATE TABLE todos (
   id SERIAL PRIMARY KEY,
   list_id INTEGER NOT NULL REFERENCES todo_lists(id) ON DELETE CASCADE,
@@ -27,6 +28,6 @@ CREATE TABLE todos (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create indexes for faster queries
+-- 정규화
 CREATE INDEX idx_todo_lists_user_id ON todo_lists(user_id);
 CREATE INDEX idx_todos_list_id ON todos(list_id);

@@ -1,4 +1,3 @@
-import React from 'react';
 import './AuthModal.css';
 
 interface AuthModalProps {

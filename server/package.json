@@ -1,42 +1,43 @@
 {
-  "name": "cloud-todo-server",
-  "version": "1.0.0",
-  "description": "클라우드 TODO 백엔드",
-  "main": "build/index.js",
-  "scripts": {
-    "dev": "nodemon src/index.ts",
-    "build": "tsc",
-    "start": "node index.js"
-  },
-  "keywords": [
-    "todo",
-    "express",
-    "typescript",
-    "postgresql",
-    "socket.io"
-  ],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "bcrypt": "^5.1.1",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.2",
-    "pg": "^8.11.3",
-    "socket.io": "^4.6.1"
-  },
-  "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
-    "@types/cookie-parser": "^1.4.10",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.21",
-    "@types/jsonwebtoken": "^9.0.5",
-    "@types/node": "^20.11.5",
-    "@types/pg": "^8.10.9",
-    "nodemon": "^3.0.3",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
-  }
+    "name": "cloud-todo-server",
+    "version": "1.0.0",
+    "description": "클라우드 TODO 백엔드",
+    "main": "build/index.js",
+    "scripts": {
+        "dev": "cross-env NODE_ENV=development nodemon src/index.ts",
+        "build": "tsc",
+        "start": "node build/index.js"
+    },
+    "keywords": [
+        "todo",
+        "express",
+        "typescript",
+        "postgresql",
+        "socket.io"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "bcrypt": "^5.1.1",
+        "cookie-parser": "^1.4.7",
+        "cors": "^2.8.5",
+        "dotenv": "^16.3.1",
+        "express": "^4.18.2",
+        "jsonwebtoken": "^9.0.2",
+        "pg": "^8.11.3",
+        "socket.io": "^4.6.1"
+    },
+    "devDependencies": {
+        "@types/bcrypt": "^5.0.2",
+        "@types/cookie-parser": "^1.4.10",
+        "@types/cors": "^2.8.17",
+        "@types/express": "^4.17.21",
+        "@types/jsonwebtoken": "^9.0.5",
+        "@types/node": "^20.11.5",
+        "@types/pg": "^8.10.9",
+        "cross-env": "^10.1.0",
+        "nodemon": "^3.0.3",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.3.3"
+    }
 }

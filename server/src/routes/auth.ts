@@ -56,7 +56,7 @@ router.post('/register', async (req, res) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000  // 7일
         });
 
@@ -111,7 +111,7 @@ router.post('/login', async (req, res) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000  // 7일
         });
 
@@ -139,10 +139,7 @@ router.delete('/delete', async (req, res) => {
         // 엑세스 토큰 해독 => userId 얻기
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { userId: number };
 
-        // 유저 todo 없애기
-        await pool.query('DELETE FROM todos WHERE user_id = $1', [decoded.userId]);
-
-        // users 테이블에서 유저 데이터 없애기
+        // users 테이블에서 유저 데이터 없애기 (CASCADE로 todo_lists와 todos도 자동 삭제됨)
         await pool.query('DELETE FROM users WHERE id = $1', [decoded.userId]);
 
         logger.info(`계정 삭제: 사용자 ID ${decoded.userId}`);
