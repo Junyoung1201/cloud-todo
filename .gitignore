@@ -1,0 +1,8 @@
+node_modules
+build
+dist
+.env
+*.log
+.DS_Store
+check-database.bat
+setup-database.bat
