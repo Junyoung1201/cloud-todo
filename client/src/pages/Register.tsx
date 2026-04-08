@@ -47,6 +47,8 @@ export default function Register() {
                             onChange={(e) => setUsername(e.target.value)}
                             maxLength={100}
                             required
+                            spellCheck={false}
+                            autoComplete="off"
                         />
                     </div>
                     <div className="form-group">
@@ -57,6 +59,8 @@ export default function Register() {
                             onChange={(e) => setEmail(e.target.value)}
                             maxLength={255}
                             required
+                            spellCheck={false}
+                            autoComplete="off"
                         />
                     </div>
                     <div className="form-group">
@@ -67,6 +71,8 @@ export default function Register() {
                             onChange={(e) => setPassword(e.target.value)}
                             maxLength={72}
                             required
+                            spellCheck={false}
+                            autoComplete="off"
                         />
                     </div>
                     <button type="submit" className="btn-primary">회원가입</button>

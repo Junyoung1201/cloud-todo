@@ -128,6 +128,8 @@ export default function SettingsModal({ isOpen, onClose, onDeleteAccount }: Sett
                   onChange={(e) => setNewEmail(e.target.value)}
                   maxLength={255}
                   required
+                  spellCheck={false}
+                  autoComplete="off"
                 />
               </div>
               {emailError && <div className="error-message">{emailError}</div>}
@@ -148,6 +150,8 @@ export default function SettingsModal({ isOpen, onClose, onDeleteAccount }: Sett
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   maxLength={72}
                   required
+                  spellCheck={false}
+                  autoComplete="off"
                 />
               </div>
               <div className="form-group">
@@ -158,6 +162,8 @@ export default function SettingsModal({ isOpen, onClose, onDeleteAccount }: Sett
                   onChange={(e) => setNewPassword(e.target.value)}
                   maxLength={72}
                   required
+                  spellCheck={false}
+                  autoComplete="off"
                 />
               </div>
               <div className="form-group">
@@ -168,6 +174,8 @@ export default function SettingsModal({ isOpen, onClose, onDeleteAccount }: Sett
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   maxLength={72}
                   required
+                  spellCheck={false}
+                  autoComplete="off"
                 />
               </div>
               {passwordError && <div className="error-message">{passwordError}</div>}

@@ -366,6 +366,8 @@ export default function Dashboard() {
                   placeholder="리스트 이름..."
                   className="list-title-input"
                   autoFocus
+                  spellCheck={false}
+                  autoComplete="off"
                 />
               </form>
             )}
@@ -384,6 +386,8 @@ export default function Dashboard() {
                   maxLength={1000}
                   placeholder="새로운 할 일을 추가하세요..."
                   className="todo-input"
+                  spellCheck={false}
+                  autoComplete="off"
                 />
                 <button type="submit" className="btn-primary" title="추가">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

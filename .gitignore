@@ -6,3 +6,4 @@ dist
 .DS_Store
 check-database.bat
 setup-database.bat
+todo

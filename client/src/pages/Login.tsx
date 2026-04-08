@@ -46,6 +46,8 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
               maxLength={255}
               required
+              spellCheck={false}
+              autoComplete="off"
             />
           </div>
           <div className="form-group">
@@ -56,6 +58,8 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               maxLength={72}
               required
+              spellCheck={false}
+              autoComplete="off"
             />
           </div>
           <button type="submit" className="btn-primary">로그인</button>
