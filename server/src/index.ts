@@ -9,6 +9,7 @@ import todoListRoutes from './routes/todoList';
 import todoRoutes from './routes/todo';
 import { authSocket } from './middleware/auth';
 import { setupSocketHandlers } from './socket/handlers';
+import logger from './utils/logger';
 
 dotenv.config();
 
@@ -44,7 +45,22 @@ const PORT = process.env.PORT as string;
 
 httpServer.listen(PORT, () => {
     console.clear();
-    console.log(`클라우드 TODO 백엔드 (포트: ${PORT})`);
+    logger.info('='.repeat(50));
+    logger.info(`클라우드 TODO 백엔드 시작 (포트: ${PORT})`);
+    logger.info(`환경: ${process.env.NODE_ENV || 'development'}`);
+    logger.info(`클라이언트 URL: ${process.env.CLIENT_URL}`);
+    logger.info('='.repeat(50));
+});
+
+// 전역 에러 핸들러
+process.on('uncaughtException', (error: Error) => {
+    logger.error('처리되지 않은 예외 발생', error);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (reason: any) => {
+    logger.error('처리되지 않은 Promise 거부', reason);
+    process.exit(1);
 });
 
 export { io };

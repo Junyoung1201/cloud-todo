@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { Socket } from 'socket.io';
+import logger from '../utils/logger';
 
 export interface AuthRequest extends Request {
     userId?: number;
@@ -19,6 +20,7 @@ export const authToken = (req: AuthRequest, res: Response, next: NextFunction) =
         req.userId = decoded.userId;
         next();
     } catch (error) {
+        logger.warn('유효하지 않은 토큰으로 접근 시도', error);
         return res.status(403).json({ error: 'Invalid or expired token' });
     }
 };
@@ -44,6 +46,7 @@ export const authSocket = (socket: Socket, next: (err?: Error) => void) => {
         socket.data.userId = decoded.userId;
         next();
     } catch (error) {
+        logger.warn('Socket 인증 실패', error);
         next(new Error('Authentication error'));
     }
 };

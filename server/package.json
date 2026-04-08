@@ -1,12 +1,12 @@
 {
   "name": "cloud-todo-server",
   "version": "1.0.0",
-  "description": "Cloud TODO backend server with real-time synchronization",
+  "description": "클라우드 TODO 백엔드",
   "main": "build/index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
     "build": "tsc",
-    "start": "node build/index.js"
+    "start": "node index.js"
   },
   "keywords": [
     "todo",

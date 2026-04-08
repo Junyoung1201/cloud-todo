@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import pool from '../config/database';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '../constants/messages';
+import logger from '../utils/logger';
 
 const router = Router();
 
@@ -59,10 +60,11 @@ router.post('/register', async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000  // 7일
         });
 
+        logger.info(`새 사용자 등록: ${user.email} (ID: ${user.id})`);
         res.status(201).json({ user });
 
     } catch (error) {
-        console.error(error);
+        logger.error('회원가입 중 오류 발생', error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });
@@ -113,11 +115,12 @@ router.post('/login', async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000  // 7일
         });
 
+        logger.info(`사용자 로그인: ${user.email} (ID: ${user.id})`);
         res.json({
             user: { id: user.id, email: user.email, username: user.username }
         });
     } catch (error) {
-        console.error(error);
+        logger.error('로그인 중 오류 발생', error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });
@@ -142,9 +145,10 @@ router.delete('/delete', async (req, res) => {
         // users 테이블에서 유저 데이터 없애기
         await pool.query('DELETE FROM users WHERE id = $1', [decoded.userId]);
 
+        logger.info(`계정 삭제: 사용자 ID ${decoded.userId}`);
         res.json({ message: SUCCESS_MESSAGES.AUTH.ACCOUNT_DELETED });
     } catch (error) {
-        console.error(error);
+        logger.error('계정 삭제 중 오류 발생', error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });
@@ -181,9 +185,10 @@ router.put('/update-email', async (req, res) => {
             [email, decoded.userId]
         );
 
+        logger.info(`이메일 변경: 사용자 ID ${decoded.userId}, 새 이메일 ${email}`);
         res.json({ user: result.rows[0] });
     } catch (error) {
-        console.error(error);
+        logger.error('이메일 변경 중 오류 발생', error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });
@@ -229,9 +234,10 @@ router.put('/update-password', async (req, res) => {
         // 비밀번호 업데이트
         await pool.query('UPDATE users SET password = $1 WHERE id = $2', [hashedPassword, decoded.userId]);
 
+        logger.info(`비밀번호 변경: 사용자 ID ${decoded.userId}`);
         res.json({ message: SUCCESS_MESSAGES.AUTH.PASSWORD_CHANGED });
     } catch (error) {
-        console.error(error);
+        logger.error('비밀번호 변경 중 오류 발생', error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });
