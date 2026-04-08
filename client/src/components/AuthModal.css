@@ -139,3 +139,28 @@
         font-size: 13px;
     }
 }
+
+/* Dark Mode Styles */
+body.dark-mode .modal-overlay {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+body.dark-mode .modal-content {
+    background: #2D3748;
+}
+
+body.dark-mode .modal-title {
+    color: #E2E8F0;
+}
+
+body.dark-mode .modal-message {
+    color: #CBD5E0;
+}
+
+body.dark-mode .modal-button {
+    background-color: #3B82F6;
+}
+
+body.dark-mode .modal-button:hover {
+    background-color: #2563EB;
+}

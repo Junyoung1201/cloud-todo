@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import pool from '../config/database';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '../constants/messages';
+import logger from '../utils/logger';
 
 const router = Router();
 
@@ -51,11 +52,19 @@ router.post('/register', async (req, res) => {
             expiresIn: '7d'
         });
 
-        // 토큰 json으로 주기
-        res.status(201).json({ user, token });
+        // 토큰을 HttpOnly 쿠키로 전송
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000  // 7일
+        });
+
+        logger.info(`새 사용자 등록: ${user.email} (ID: ${user.id})`);
+        res.status(201).json({ user });
 
     } catch (error) {
-        console.error(error);
+        logger.error('회원가입 중 오류 발생', error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });
@@ -98,12 +107,20 @@ router.post('/login', async (req, res) => {
             expiresIn: '7d'
         });
 
+        // 토큰을 HttpOnly 쿠키로 전송
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000  // 7일
+        });
+
+        logger.info(`사용자 로그인: ${user.email} (ID: ${user.id})`);
         res.json({
-            user: { id: user.id, email: user.email, username: user.username },
-            token
+            user: { id: user.id, email: user.email, username: user.username }
         });
     } catch (error) {
-        console.error(error);
+        logger.error('로그인 중 오류 발생', error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });
@@ -113,8 +130,7 @@ router.post('/login', async (req, res) => {
 //
 router.delete('/delete', async (req, res) => {
     try {
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1];
+        const token = req.cookies.token;
 
         if (!token) {
             return res.status(401).json({ error: ERROR_MESSAGES.COMMON.ACCESS_TOKEN_REQUIRED });
@@ -123,15 +139,13 @@ router.delete('/delete', async (req, res) => {
         // 엑세스 토큰 해독 => userId 얻기
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { userId: number };
 
-        // 유저 todo 없애기
-        await pool.query('DELETE FROM todos WHERE user_id = $1', [decoded.userId]);
-
-        // users 테이블에서 유저 데이터 없애기
+        // users 테이블에서 유저 데이터 없애기 (CASCADE로 todo_lists와 todos도 자동 삭제됨)
         await pool.query('DELETE FROM users WHERE id = $1', [decoded.userId]);
 
+        logger.info(`계정 삭제: 사용자 ID ${decoded.userId}`);
         res.json({ message: SUCCESS_MESSAGES.AUTH.ACCOUNT_DELETED });
     } catch (error) {
-        console.error(error);
+        logger.error('계정 삭제 중 오류 발생', error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });
@@ -141,8 +155,7 @@ router.delete('/delete', async (req, res) => {
 //
 router.put('/update-email', async (req, res) => {
     try {
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1];
+        const token = req.cookies.token;
 
         if (!token) {
             return res.status(401).json({ error: ERROR_MESSAGES.COMMON.ACCESS_TOKEN_REQUIRED });
@@ -169,9 +182,10 @@ router.put('/update-email', async (req, res) => {
             [email, decoded.userId]
         );
 
+        logger.info(`이메일 변경: 사용자 ID ${decoded.userId}, 새 이메일 ${email}`);
         res.json({ user: result.rows[0] });
     } catch (error) {
-        console.error(error);
+        logger.error('이메일 변경 중 오류 발생', error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });
@@ -181,8 +195,7 @@ router.put('/update-email', async (req, res) => {
 //
 router.put('/update-password', async (req, res) => {
     try {
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1];
+        const token = req.cookies.token;
 
         if (!token) {
             return res.status(401).json({ error: ERROR_MESSAGES.COMMON.ACCESS_TOKEN_REQUIRED });
@@ -218,9 +231,10 @@ router.put('/update-password', async (req, res) => {
         // 비밀번호 업데이트
         await pool.query('UPDATE users SET password = $1 WHERE id = $2', [hashedPassword, decoded.userId]);
 
+        logger.info(`비밀번호 변경: 사용자 ID ${decoded.userId}`);
         res.json({ message: SUCCESS_MESSAGES.AUTH.PASSWORD_CHANGED });
     } catch (error) {
-        console.error(error);
+        logger.error('비밀번호 변경 중 오류 발생', error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });

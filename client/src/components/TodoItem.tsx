@@ -108,6 +108,8 @@ export default function TodoItem({ todo }: TodoItemProps) {
           maxLength={1000}
           className="todo-edit-input"
           autoFocus
+          spellCheck={false}
+          autoComplete="off"
         />
       ) : (
         <span className="todo-title" onDoubleClick={handleDoubleClick}>{todo.title}</span>

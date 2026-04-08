@@ -3,6 +3,7 @@ import pool from '../config/database';
 import { authToken, AuthRequest } from '../middleware/auth';
 import { io } from '../index';
 import { ERROR_MESSAGES } from '../constants/messages';
+import logger from '../utils/logger';
 
 const router = Router();
 
@@ -17,7 +18,7 @@ router.get('/', authToken, async (req: AuthRequest, res) => {
         );
         res.json(result.rows);
     } catch (error) {
-        console.error(error);
+        logger.error(`할 일 리스트 조회 중 오류 발생 (userId: ${req.userId})`, error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });
@@ -44,9 +45,10 @@ router.post('/', authToken, async (req: AuthRequest, res) => {
         // Emit to all connected clients of this user
         io.to(`user:${req.userId}`).emit('todoList:created', todoList);
 
+        logger.info(`할 일 리스트 생성: "${title}" (userId: ${req.userId}, listId: ${todoList.id})`);
         res.status(201).json(todoList);
     } catch (error) {
-        console.error(error);
+        logger.error('할 일 리스트 생성 중 오류 발생', error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });
@@ -78,9 +80,10 @@ router.put('/:id', authToken, async (req: AuthRequest, res) => {
         // socket.io 변경사항 공지
         io.to(`user:${req.userId}`).emit('todoList:updated', todoList);
 
+        logger.info(`할 일 리스트 수정: ID ${id}, 새 제목 "${title}" (userId: ${req.userId})`);
         res.json(todoList);
     } catch (error) {
-        console.error(error);
+        logger.error(`할 일 리스트 수정 중 오류 발생 (listId: ${req.params.id})`, error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });
@@ -104,9 +107,10 @@ router.delete('/:id', authToken, async (req: AuthRequest, res) => {
         // socket.io로 계정 공지
         io.to(`user:${req.userId}`).emit('todoList:deleted', { id: parseInt(id) });
 
+        logger.info(`할 일 리스트 삭제: ID ${id} (userId: ${req.userId})`);
         res.json({ message: 'Todo list deleted successfully' });
     } catch (error) {
-        console.error(error);
+        logger.error(`할 일 리스트 삭제 중 오류 발생 (listId: ${req.params.id})`, error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });
@@ -154,7 +158,7 @@ router.put('/order/update', authToken, async (req: AuthRequest, res) => {
             client.release();
         }
     } catch (error) {
-        console.error(error);
+        logger.error('할 일 리스트 순서 변경 중 오류 발생', error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });

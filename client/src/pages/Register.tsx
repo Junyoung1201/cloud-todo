@@ -20,10 +20,10 @@ export default function Register() {
 
         try {
             const response = await api.post('/auth/register', { email, password, username });
-            const { user, token } = response.data;
+            const { user } = response.data;
 
-            dispatch(setCredentials({ user, token }));
-            socketService.connect(token);
+            dispatch(setCredentials({ user }));
+            socketService.connect();
             navigate('/dashboard');
         } catch (err: any) {
             setError(err.response?.data?.error || '회원가입에 실패했습니다.');
@@ -47,6 +47,8 @@ export default function Register() {
                             onChange={(e) => setUsername(e.target.value)}
                             maxLength={100}
                             required
+                            spellCheck={false}
+                            autoComplete="off"
                         />
                     </div>
                     <div className="form-group">
@@ -57,6 +59,8 @@ export default function Register() {
                             onChange={(e) => setEmail(e.target.value)}
                             maxLength={255}
                             required
+                            spellCheck={false}
+                            autoComplete="off"
                         />
                     </div>
                     <div className="form-group">
@@ -67,6 +71,8 @@ export default function Register() {
                             onChange={(e) => setPassword(e.target.value)}
                             maxLength={72}
                             required
+                            spellCheck={false}
+                            autoComplete="off"
                         />
                     </div>
                     <button type="submit" className="btn-primary">회원가입</button>

@@ -8,6 +8,7 @@ import { RootState } from '../store';
 import { logout } from '../store/slices/authSlice';
 import { setTodos, addTodo, updateTodo, removeTodo } from '../store/slices/todoSlice';
 import { setTodoLists, addTodoList, updateTodoList, removeTodoList, setCurrentListId } from '../store/slices/todoListSlice';
+import { toggleDarkMode } from '../store/slices/themeSlice';
 import api from '../services/api';
 import socketService from '../services/socket';
 import TodoItem from '../components/TodoItem';
@@ -25,9 +26,10 @@ export default function Dashboard() {
   
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, token } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
   const { todos } = useSelector((state: RootState) => state.todo);
   const { lists, currentListId } = useSelector((state: RootState) => state.todoList);
+  const { isDarkMode } = useSelector((state: RootState) => state.theme);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -37,9 +39,9 @@ export default function Dashboard() {
   );
 
   useEffect(() => {
-    if (token) {
+    if (user) {
       // Connect to socket
-      const socket = socketService.connect(token);
+      const socket = socketService.connect();
 
       // Load todo lists and todos
       loadTodoLists();
@@ -93,7 +95,7 @@ export default function Dashboard() {
         socket.off('todoLists:reordered');
       };
     }
-  }, [token, currentListId]);
+  }, [user, currentListId]);
 
   useEffect(() => {
     if (currentListId) {
@@ -270,6 +272,30 @@ export default function Dashboard() {
         <div className="user-info">
           <span className="user-name">{user?.username}님, 환영합니다!</span>
           <button 
+            onClick={() => dispatch(toggleDarkMode())} 
+            className="btn-dark-mode"
+            aria-label={isDarkMode ? '라이트 모드' : '다크 모드'}
+            title={isDarkMode ? '라이트 모드' : '다크 모드'}
+          >
+            {isDarkMode ? (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
+            ) : (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              </svg>
+            )}
+          </button>
+          <button 
             onClick={() => setIsSettingsOpen(true)} 
             className="btn-settings"
             aria-label="설정"
@@ -366,6 +392,8 @@ export default function Dashboard() {
                   placeholder="리스트 이름..."
                   className="list-title-input"
                   autoFocus
+                  spellCheck={false}
+                  autoComplete="off"
                 />
               </form>
             )}
@@ -384,6 +412,8 @@ export default function Dashboard() {
                   maxLength={1000}
                   placeholder="새로운 할 일을 추가하세요..."
                   className="todo-input"
+                  spellCheck={false}
+                  autoComplete="off"
                 />
                 <button type="submit" className="btn-primary" title="추가">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

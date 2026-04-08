@@ -19,10 +19,10 @@ export default function Login() {
 
     try {
       const response = await api.post('/auth/login', { email, password });
-      const { user, token } = response.data;
+      const { user } = response.data;
 
-      dispatch(setCredentials({ user, token }));
-      socketService.connect(token);
+      dispatch(setCredentials({ user }));
+      socketService.connect();
       navigate('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.error || '아이디 또는 비밀번호가 올바르지 않아요.');
@@ -46,6 +46,8 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
               maxLength={255}
               required
+              spellCheck={false}
+              autoComplete="off"
             />
           </div>
           <div className="form-group">
@@ -56,6 +58,8 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               maxLength={72}
               required
+              spellCheck={false}
+              autoComplete="off"
             />
           </div>
           <button type="submit" className="btn-primary">로그인</button>

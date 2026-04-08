@@ -3,6 +3,7 @@ import pool from '../config/database';
 import { authToken, AuthRequest } from '../middleware/auth';
 import { io } from '../index';
 import { ERROR_MESSAGES } from '../constants/messages';
+import logger from '../utils/logger';
 
 const router = Router();
 
@@ -75,9 +76,10 @@ router.post('/', authToken, async (req: AuthRequest, res) => {
         // 할 일 생성 끝 -> socket.io로 할 일 만들었다고 알리기
         io.to(`user:${req.userId}`).emit('todo:created', todo);
 
+        logger.info(`할 일 생성: "${title}" (listId: ${listId}, todoId: ${todo.id})`);
         res.status(201).json(todo);
     } catch (error) {
-        console.error(error);
+        logger.error('할 일 생성 중 오류 발생', error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });
@@ -115,9 +117,10 @@ router.put('/:id', authToken, async (req: AuthRequest, res) => {
         // Emit to all connected clients of this user
         io.to(`user:${req.userId}`).emit('todo:updated', todo);
 
+        logger.info(`할 일 수정: ID ${id} (userId: ${req.userId})`);
         res.json(todo);
     } catch (error) {
-        console.error(error);
+        logger.error(`할 일 수정 중 오류 발생 (todoId: ${req.params.id})`, error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });
@@ -158,9 +161,10 @@ router.put('/order/:listId', authToken, async (req: AuthRequest, res) => {
 
         io.to(`user:${req.userId}`).emit('todos:reordered', { listId, todos: result.rows });
 
+        logger.info(`할 일 순서 변경: listId ${listId} (${todoIds.length}개 항목)`);
         res.json(result.rows);
     } catch (error) {
-        console.error(error);
+        logger.error(`할 일 순서 변경 중 오류 발생 (listId: ${req.params.listId})`, error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });
@@ -191,9 +195,10 @@ router.delete('/:id', authToken, async (req: AuthRequest, res) => {
 
         io.to(`user:${req.userId}`).emit('todo:deleted', { id: parseInt(id) });
 
+        logger.info(`할 일 삭제: ID ${id} (userId: ${req.userId})`);
         res.json({ message: 'Todo deleted successfully' });
     } catch (error) {
-        console.error(error);
+        logger.error(`할 일 삭제 중 오류 발생 (todoId: ${req.params.id})`, error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });

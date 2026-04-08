@@ -2,7 +2,10 @@ node_modules
 build
 dist
 .env
+.env.production
+.env.development
 *.log
 .DS_Store
 check-database.bat
 setup-database.bat
+todo

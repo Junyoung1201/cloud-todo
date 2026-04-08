@@ -105,6 +105,8 @@ export default function TodoListItem({
                     }}
                     className="list-title-input"
                     autoFocus
+                    spellCheck={false}
+                    autoComplete="off"
                 />
             ) : (
                 <>
