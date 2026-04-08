@@ -188,3 +188,84 @@
     height: 28px;
   }
 }
+
+/* Dark Mode Styles */
+body.dark-mode .todo-item {
+  background: #374151;
+  border-color: #4A5568;
+}
+
+body.dark-mode .todo-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .drag-handle {
+  color: #4A5568;
+}
+
+body.dark-mode .drag-handle:hover {
+  color: #6B7280;
+}
+
+body.dark-mode .todo-checkbox {
+  accent-color: #3B82F6;
+}
+
+body.dark-mode .todo-title {
+  color: #E2E8F0;
+}
+
+body.dark-mode .todo-item.completed .todo-title {
+  color: #6B7280;
+}
+
+body.dark-mode .todo-edit-input {
+  background-color: #2D3748;
+  border-color: #3B82F6;
+  color: #E2E8F0;
+}
+
+body.dark-mode .todo-edit-input:focus {
+  border-color: #2563EB;
+  background-color: #374151;
+}
+
+body.dark-mode .btn-edit {
+  background-color: #1E3A5F;
+  color: #60A5FA;
+}
+
+body.dark-mode .btn-edit:hover {
+  background-color: #1E40AF;
+  color: #93C5FD;
+}
+
+body.dark-mode .btn-delete {
+  background-color: #7F1D1D;
+  color: #FCA5A5;
+}
+
+body.dark-mode .btn-delete:hover {
+  background-color: #991B1B;
+  color: #FEE2E2;
+}
+
+body.dark-mode .btn-save {
+  background-color: #065F46;
+  color: #6EE7B7;
+}
+
+body.dark-mode .btn-save:hover {
+  background-color: #047857;
+  color: #A7F3D0;
+}
+
+body.dark-mode .btn-cancel {
+  background-color: #374151;
+  color: #9CA3AF;
+}
+
+body.dark-mode .btn-cancel:hover {
+  background-color: #4B5563;
+  color: #D1D5DB;
+}

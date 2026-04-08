@@ -300,3 +300,89 @@
         flex-direction: column;
     }
 }
+
+/* Dark Mode Styles */
+body.dark-mode .settings-overlay {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+body.dark-mode .settings-modal {
+    background: #2D3748;
+}
+
+body.dark-mode .settings-header {
+    background: #2D3748;
+    border-bottom: 1px solid #4A5568;
+}
+
+body.dark-mode .settings-header h2 {
+    color: #E2E8F0;
+}
+
+body.dark-mode .btn-close-settings {
+    color: #9CA3AF;
+}
+
+body.dark-mode .btn-close-settings:hover {
+    color: #E2E8F0;
+}
+
+body.dark-mode .settings-section {
+    border-bottom: 1px solid #4A5568;
+}
+
+body.dark-mode .settings-section h3 {
+    color: #E2E8F0;
+}
+
+body.dark-mode .settings-section label {
+    color: #CBD5E0;
+}
+
+body.dark-mode .settings-section input {
+    background-color: #374151;
+    border-color: #4A5568;
+    color: #E2E8F0;
+}
+
+body.dark-mode .settings-section input:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+body.dark-mode .error-message {
+    background-color: #7F1D1D;
+    color: #FCA5A5;
+}
+
+body.dark-mode .success-message {
+    background-color: #065F46;
+    color: #6EE7B7;
+}
+
+body.dark-mode .settings-section .btn-primary {
+    background-color: #3B82F6;
+}
+
+body.dark-mode .settings-section .btn-primary:hover {
+    background-color: #2563EB;
+}
+
+body.dark-mode .btn-logout {
+    background-color: #374151;
+    color: #E2E8F0;
+}
+
+body.dark-mode .btn-logout:hover {
+    background-color: #4B5563;
+}
+
+body.dark-mode .btn-delete-account {
+    background-color: #7F1D1D;
+    color: #FCA5A5;
+}
+
+body.dark-mode .btn-delete-account:hover {
+    background-color: #991B1B;
+    color: #FEE2E2;
+}

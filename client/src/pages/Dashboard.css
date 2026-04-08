@@ -72,6 +72,25 @@
     color: #2D3748;
 }
 
+.btn-dark-mode {
+    padding: 8px;
+    background-color: white;
+    color: #4A5568;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-dark-mode:hover {
+    background-color: #F7FAFC;
+    border-color: #CBD5E0;
+    color: #2D3748;
+}
+
 .dashboard-body {
     flex: 1;
     display: flex;
@@ -539,5 +558,175 @@
     .add-todo-form .btn-primary svg {
         width: 18px;
         height: 18px;
+    }
+}
+
+/* Dark Mode Styles */
+body.dark-mode .dashboard {
+    background-color: #1A202C;
+}
+
+body.dark-mode .dashboard-header {
+    background: #2D3748;
+    color: #E2E8F0;
+    border-bottom: 1px solid #4A5568;
+}
+
+body.dark-mode .dashboard-header h1,
+body.dark-mode .dashboard-logo h1 {
+    color: #E2E8F0;
+}
+
+body.dark-mode .user-name {
+    color: #CBD5E0;
+}
+
+body.dark-mode .btn-settings,
+body.dark-mode .btn-dark-mode {
+    background-color: #2D3748;
+    color: #CBD5E0;
+    border-color: #4A5568;
+}
+
+body.dark-mode .btn-settings:hover,
+body.dark-mode .btn-dark-mode:hover {
+    background-color: #374151;
+    border-color: #6B7280;
+    color: #E2E8F0;
+}
+
+body.dark-mode .sidebar {
+    background: #2D3748;
+    border-right: 1px solid #4A5568;
+}
+
+body.dark-mode .sidebar-header {
+    border-bottom: 1px solid #4A5568;
+}
+
+body.dark-mode .sidebar-header h2 {
+    color: #E2E8F0;
+}
+
+body.dark-mode .btn-add-list {
+    background-color: #3B82F6;
+}
+
+body.dark-mode .btn-add-list:hover {
+    background-color: #2563EB;
+}
+
+body.dark-mode .list-item {
+    color: #CBD5E0;
+}
+
+body.dark-mode .list-item:hover {
+    background-color: #374151;
+}
+
+body.dark-mode .list-item.active {
+    background-color: #1E3A5F;
+    color: #60A5FA;
+}
+
+body.dark-mode .list-item.active .list-title {
+    color: #60A5FA;
+}
+
+body.dark-mode .list-title {
+    color: #CBD5E0;
+}
+
+body.dark-mode .list-title-input {
+    background-color: #374151;
+    border-color: #3B82F6;
+    color: #E2E8F0;
+}
+
+body.dark-mode .btn-delete-list:hover {
+    background-color: #7F1D1D;
+    color: #FCA5A5;
+}
+
+body.dark-mode .dashboard-main {
+    background-color: #1A202C;
+}
+
+body.dark-mode .no-list-selected {
+    color: #6B7280;
+}
+
+body.dark-mode .todo-input {
+    background-color: #374151;
+    border-color: #4A5568;
+    color: #E2E8F0;
+}
+
+body.dark-mode .todo-input:focus {
+    border-color: #3B82F6;
+}
+
+body.dark-mode .todo-input::placeholder {
+    color: #6B7280;
+}
+
+body.dark-mode .add-todo-form .btn-primary {
+    background-color: #3B82F6;
+}
+
+body.dark-mode .add-todo-form .btn-primary:hover {
+    background-color: #2563EB;
+}
+
+body.dark-mode .no-todos {
+    color: #6B7280;
+}
+
+body.dark-mode .list-items::-webkit-scrollbar-thumb,
+body.dark-mode .todo-list::-webkit-scrollbar-thumb {
+    background: #4A5568;
+}
+
+body.dark-mode .list-items::-webkit-scrollbar-thumb:hover,
+body.dark-mode .todo-list::-webkit-scrollbar-thumb:hover {
+    background: #6B7280;
+}
+
+body.dark-mode .mobile-menu-btn {
+    color: #CBD5E0;
+}
+
+body.dark-mode .mobile-menu-btn:hover {
+    background-color: #374151;
+}
+
+body.dark-mode .btn-close-sidebar {
+    color: #CBD5E0;
+}
+
+body.dark-mode .btn-close-sidebar:hover {
+    background-color: #374151;
+}
+
+body.dark-mode .list-item .drag-handle {
+    color: #4A5568;
+}
+
+body.dark-mode .list-item:hover .drag-handle {
+    color: #6B7280;
+}
+
+@media (max-width: 768px) {
+    body.dark-mode .sidebar.mobile-open {
+        box-shadow: 4px 0 12px rgba(0, 0, 0, 0.5);
+    }
+
+    body.dark-mode .btn-dark-mode {
+        padding: 6px;
+    }
+
+    body.dark-mode .btn-dark-mode svg {
+        width: 20px;
+        height: 20px;
     }
 }

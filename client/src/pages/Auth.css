@@ -198,3 +198,68 @@
         font-size: 13px;
     }
 }
+
+/* Dark Mode Styles */
+body.dark-mode .auth-container {
+    background: #1A202C;
+}
+
+body.dark-mode .auth-box {
+    background: #2D3748;
+    border-color: #4A5568;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .auth-logo h1,
+body.dark-mode .auth-box h1 {
+    color: #E2E8F0;
+}
+
+body.dark-mode .auth-box h2 {
+    color: #CBD5E0;
+}
+
+body.dark-mode .error {
+    background-color: #7F1D1D;
+    color: #FCA5A5;
+    border-color: #991B1B;
+}
+
+body.dark-mode .form-group label {
+    color: #CBD5E0;
+}
+
+body.dark-mode .form-group input {
+    background-color: #374151;
+    border-color: #4A5568;
+    color: #E2E8F0;
+}
+
+body.dark-mode .form-group input:focus {
+    border-color: #3B82F6;
+    background-color: #1A202C;
+}
+
+body.dark-mode .btn-primary {
+    background: #3B82F6;
+}
+
+body.dark-mode .btn-primary:hover {
+    background-color: #2563EB;
+}
+
+body.dark-mode .btn-primary:active {
+    background-color: #1D4ED8;
+}
+
+body.dark-mode .auth-link {
+    color: #9CA3AF;
+}
+
+body.dark-mode .auth-link a {
+    color: #60A5FA;
+}
+
+body.dark-mode .auth-link a:hover {
+    color: #3B82F6;
+}

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'r
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from './store';
 import { logout } from './store/slices/authSlice';
+import { setDarkMode } from './store/slices/themeSlice';
 import socketService from './services/socket';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
@@ -13,9 +14,16 @@ import './App.css';
 
 function AppContent() {
     const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+    const isDarkMode = useSelector((state: RootState) => state.theme.isDarkMode);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [showAuthModal, setShowAuthModal] = useState(false);
+
+    // Apply dark mode on initial load
+    useEffect(() => {
+        const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+        dispatch(setDarkMode(savedDarkMode));
+    }, [dispatch]);
 
     useEffect(() => {
         const handleUnauthorized = () => {
