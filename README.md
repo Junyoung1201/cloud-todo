@@ -27,12 +27,12 @@
 
 ### 프론트엔드
 - **TypeScript**
-- **React 18** - 최신 버전의 React를 사용한 컴포넌트 기반 UI 구축
+- **React 18:** 최신 버전의 React를 사용한 컴포넌트 기반 UI 구축
 - **Redux Toolkit**
 - **Vite**
-- **@dnd-kit** - 드래그 앤 드롭 처리를 위해 사용하였습니다.
-- **axios** - 백엔드와 HTTP 통신을 위해 사용하였습니다.
-- **socket.io-client** - 실시간 양방향 통신을 위해 사용하였습니다.
+- **@dnd-kit:** 드래그 앤 드롭 처리를 위해 사용하였습니다.
+- **axios:** 백엔드와 HTTP 통신을 위해 사용하였습니다.
+- **socket.io-client:** 실시간 양방향 통신을 위해 사용하였습니다.
 
 ### 백엔드
 - **TypeScript**
@@ -60,7 +60,7 @@ Socket.io를 활용하여 여러 클라이언트 간 실시간 데이터 동기�
 
 ### 기술적 도전
 - 여러 클라이언트 간 데이터 충돌 방지를 위한 이벤트 기반 아키텍처를 설계
-- Frontend와 Backend 모두 TypeScript를 사용하여 타입 오류 사전 방지
+- 프론트엔드와 백엔드 모두 TypeScript를 사용하여 타입 오류 사전 방지
 - Redux 상태 정규화 및 useMemo/useCallback을 활용한 리렌더링 최적화
 - JWT 토큰 갱신 전략, bcrypt를 활용한 비밀번호 해싱, SQLi 방지
 
