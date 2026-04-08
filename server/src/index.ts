@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import authRoutes from './routes/auth';
@@ -26,6 +27,7 @@ app.use(cors({
     credentials: true
 }));
 app.use(express.json());
+app.use(cookieParser());
 
 
 ///////////////////////   라우터

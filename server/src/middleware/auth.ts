@@ -7,8 +7,8 @@ export interface AuthRequest extends Request {
 }
 
 export const authToken = (req: AuthRequest, res: Response, next: NextFunction) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    // 쿠키에서 토큰 읽기
+    const token = req.cookies.token;
 
     if (!token) {
         return res.status(401).json({ error: 'Access token required' });
@@ -24,7 +24,16 @@ export const authToken = (req: AuthRequest, res: Response, next: NextFunction) =
 };
 
 export const authSocket = (socket: Socket, next: (err?: Error) => void) => {
-    const token = socket.handshake.auth.token;
+    // 쿠키에서 토큰 읽기
+    const cookies = socket.handshake.headers.cookie;
+    
+    if (!cookies) {
+        return next(new Error('Authentication error'));
+    }
+
+    // 쿠키 파싱
+    const tokenMatch = cookies.match(/token=([^;]+)/);
+    const token = tokenMatch ? tokenMatch[1] : null;
 
     if (!token) {
         return next(new Error('Authentication error'));

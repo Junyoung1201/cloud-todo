@@ -5,15 +5,13 @@ const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
 class SocketService {
   private socket: Socket | null = null;
 
-  connect(token: string) {
+  connect() {
     if (this.socket?.connected) {
       return this.socket;
     }
 
     this.socket = io(SOCKET_URL, {
-      auth: {
-        token
-      }
+      withCredentials: true  // 쿠키를 자동으로 전송
     });
 
     // Handle authentication errors

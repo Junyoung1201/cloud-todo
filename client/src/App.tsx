@@ -19,6 +19,11 @@ function AppContent() {
 
     useEffect(() => {
         const handleUnauthorized = () => {
+            // 로그인/회원가입 페이지에서는 401 에러가 정상적인 시나리오이므로 모달을 띄우지 않음
+            const currentPath = window.location.pathname;
+            if (currentPath === '/login' || currentPath === '/register') {
+                return;
+            }
             setShowAuthModal(true);
         };
 

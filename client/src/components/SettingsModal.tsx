@@ -16,7 +16,7 @@ interface SettingsModalProps {
 export default function SettingsModal({ isOpen, onClose, onDeleteAccount }: SettingsModalProps) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, token } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
 
   const [newEmail, setNewEmail] = useState(user?.email || '');
   const [currentPassword, setCurrentPassword] = useState('');
@@ -42,7 +42,7 @@ export default function SettingsModal({ isOpen, onClose, onDeleteAccount }: Sett
 
     try {
       const response = await api.put('/auth/update-email', { email: newEmail });
-      dispatch(setCredentials({ user: response.data.user, token: token! }));
+      dispatch(setCredentials({ user: response.data.user }));
       setEmailSuccess('이메일이 변경되었습니다.');
     } catch (err: any) {
       setEmailError(err.response?.data?.error || '이메일 변경에 실패했습니다.');

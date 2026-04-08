@@ -25,7 +25,7 @@ export default function Dashboard() {
   
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, token } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
   const { todos } = useSelector((state: RootState) => state.todo);
   const { lists, currentListId } = useSelector((state: RootState) => state.todoList);
 
@@ -37,9 +37,9 @@ export default function Dashboard() {
   );
 
   useEffect(() => {
-    if (token) {
+    if (user) {
       // Connect to socket
-      const socket = socketService.connect(token);
+      const socket = socketService.connect();
 
       // Load todo lists and todos
       loadTodoLists();
@@ -93,7 +93,7 @@ export default function Dashboard() {
         socket.off('todoLists:reordered');
       };
     }
-  }, [token, currentListId]);
+  }, [user, currentListId]);
 
   useEffect(() => {
     if (currentListId) {

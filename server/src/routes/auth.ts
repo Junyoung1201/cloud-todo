@@ -51,8 +51,15 @@ router.post('/register', async (req, res) => {
             expiresIn: '7d'
         });
 
-        // 토큰 json으로 주기
-        res.status(201).json({ user, token });
+        // 토큰을 HttpOnly 쿠키로 전송
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000  // 7일
+        });
+
+        res.status(201).json({ user });
 
     } catch (error) {
         console.error(error);
@@ -98,9 +105,16 @@ router.post('/login', async (req, res) => {
             expiresIn: '7d'
         });
 
+        // 토큰을 HttpOnly 쿠키로 전송
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000  // 7일
+        });
+
         res.json({
-            user: { id: user.id, email: user.email, username: user.username },
-            token
+            user: { id: user.id, email: user.email, username: user.username }
         });
     } catch (error) {
         console.error(error);
@@ -113,8 +127,7 @@ router.post('/login', async (req, res) => {
 //
 router.delete('/delete', async (req, res) => {
     try {
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1];
+        const token = req.cookies.token;
 
         if (!token) {
             return res.status(401).json({ error: ERROR_MESSAGES.COMMON.ACCESS_TOKEN_REQUIRED });
@@ -141,8 +154,7 @@ router.delete('/delete', async (req, res) => {
 //
 router.put('/update-email', async (req, res) => {
     try {
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1];
+        const token = req.cookies.token;
 
         if (!token) {
             return res.status(401).json({ error: ERROR_MESSAGES.COMMON.ACCESS_TOKEN_REQUIRED });
@@ -181,8 +193,7 @@ router.put('/update-email', async (req, res) => {
 //
 router.put('/update-password', async (req, res) => {
     try {
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1];
+        const token = req.cookies.token;
 
         if (!token) {
             return res.status(401).json({ error: ERROR_MESSAGES.COMMON.ACCESS_TOKEN_REQUIRED });
