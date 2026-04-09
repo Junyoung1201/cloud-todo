@@ -8,6 +8,8 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
 ![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=flat-square&logo=socket.io&logoColor=white)
 
+<a href="https://junyoung1201.github.io/cloud-todo/">사이트 이동하기</a>
+
 ## 프로젝트 소개
 
 클라우드 TODO는 **실시간 동기화**, **드래그 앤 드롭**, **다크 모드**를 지원하는 현대적인 TODO 웹 프로젝트입니다.
