@@ -126,6 +126,30 @@
     color: #1D4ED8;
 }
 
+.auth-description {
+    color: #718096;
+    font-size: 14px;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.auth-back-btn {
+    display: block;
+    width: 100%;
+    margin-top: 16px;
+    padding: 0;
+    background: none;
+    border: none;
+    color: #718096;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.auth-back-btn:hover {
+    color: #2563EB;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .auth-container {

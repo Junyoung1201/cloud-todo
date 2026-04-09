@@ -98,7 +98,7 @@ export default function TodoListItem({
                     value={editTitle}
                     onChange={(e) => setEditTitle(e.target.value)}
                     onBlur={handleUpdateTitle}
-                    maxLength={255}
+                    maxLength={50}
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') handleUpdateTitle();
                         if (e.key === 'Escape') handleCancel();

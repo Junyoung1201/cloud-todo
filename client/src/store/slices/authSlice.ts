@@ -4,6 +4,7 @@ interface User {
   id: number;
   email: string;
   username: string;
+  twoFactorEnabled: boolean;
 }
 
 interface AuthState {

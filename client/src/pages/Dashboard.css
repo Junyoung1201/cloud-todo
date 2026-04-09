@@ -199,9 +199,13 @@
 
 .list-title {
     flex: 1;
+    min-width: 0;
     font-size: 14px;
     color: #4A5568;
     user-select: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .list-title-input {

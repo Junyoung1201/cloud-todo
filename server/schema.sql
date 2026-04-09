@@ -4,6 +4,8 @@ CREATE TABLE users (
   email VARCHAR(255) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
   username VARCHAR(100) NOT NULL,
+  totp_secret VARCHAR(64),
+  totp_enabled BOOLEAN DEFAULT FALSE NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
