@@ -18,6 +18,7 @@ export const ERROR_MESSAGES = {
         INVALID_CREDENTIALS: '이메일 또는 비밀번호가 올바르지 않습니다.',
         INVALID_EMAIL_FORMAT: '잘못된 이메일 형식입니다.',
         INVALID_PASSWORD_FORMAT: '잘못된 비밀번호 형식입니다.',
+        AUTH_ERROR: "인증 오류",
 
         // 이메일 변경
         EMAIL_ALREADY_IN_USE: '이미 사용 중인 이메일입니다.',

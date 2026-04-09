@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { Socket } from 'socket.io';
 import logger from '../utils/logger';
+import { ERROR_MESSAGES } from '../constants/messages';
 
 export interface AuthRequest extends Request {
     userId?: number;
@@ -12,7 +13,7 @@ export const authToken = (req: AuthRequest, res: Response, next: NextFunction) =
     const token = req.cookies.token;
 
     if (!token) {
-        return res.status(401).json({ error: 'Access token required' });
+        return res.status(401).json({ error: '엑세스 토큰이 없습니다.' });
     }
 
     try {
@@ -21,7 +22,7 @@ export const authToken = (req: AuthRequest, res: Response, next: NextFunction) =
         next();
     } catch (error) {
         logger.warn('유효하지 않은 토큰으로 접근 시도', error);
-        return res.status(403).json({ error: 'Invalid or expired token' });
+        return res.status(403).json({ error: '올바르지 않은 엑세스 토큰입니다.' });
     }
 };
 
@@ -30,7 +31,7 @@ export const authSocket = (socket: Socket, next: (err?: Error) => void) => {
     const cookies = socket.handshake.headers.cookie;
     
     if (!cookies) {
-        return next(new Error('Authentication error'));
+        return next(new Error(ERROR_MESSAGES.AUTH.AUTH_ERROR));
     }
 
     // 쿠키 파싱
@@ -38,7 +39,7 @@ export const authSocket = (socket: Socket, next: (err?: Error) => void) => {
     const token = tokenMatch ? tokenMatch[1] : null;
 
     if (!token) {
-        return next(new Error('Authentication error'));
+        return next(new Error(ERROR_MESSAGES.AUTH.AUTH_ERROR));
     }
 
     try {
@@ -47,6 +48,6 @@ export const authSocket = (socket: Socket, next: (err?: Error) => void) => {
         next();
     } catch (error) {
         logger.warn('Socket 인증 실패', error);
-        next(new Error('Authentication error'));
+        next(new Error(ERROR_MESSAGES.AUTH.AUTH_ERROR));
     }
 };
