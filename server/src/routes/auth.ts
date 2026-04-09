@@ -264,6 +264,10 @@ router.post('/2fa/setup', async (req, res) => {
         const result = await pool.query('SELECT * FROM users WHERE id = $1', [decoded.userId]);
         const user = result.rows[0];
 
+        if (!user) {
+            return res.status(401).json({ error: ERROR_MESSAGES.AUTH.INVALID_CREDENTIALS });
+        }
+
         if (user.totp_enabled) {
             return res.status(400).json({ error: ERROR_MESSAGES.AUTH.TWO_FACTOR_ALREADY_ENABLED });
         }
@@ -326,6 +330,10 @@ router.post('/2fa/disable', async (req, res) => {
 
         const result = await pool.query('SELECT * FROM users WHERE id = $1', [decoded.userId]);
         const user = result.rows[0];
+
+        if (!user) {
+            return res.status(401).json({ error: ERROR_MESSAGES.AUTH.INVALID_CREDENTIALS });
+        }
 
         if (!user.totp_enabled) {
             return res.status(400).json({ error: ERROR_MESSAGES.AUTH.TWO_FACTOR_NOT_ENABLED });

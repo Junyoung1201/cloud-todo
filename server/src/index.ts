@@ -50,20 +50,17 @@ const PORT = process.env.PORT as string;
 
 async function runMigrations() {
     try {
-        await pool.query(`
-            ALTER TABLE users
-            ADD COLUMN IF NOT EXISTS totp_secret VARCHAR(64),
-            ADD COLUMN IF NOT EXISTS totp_enabled BOOLEAN DEFAULT FALSE NOT NULL
-        `);
+        // 컬럼별로 개별 쿼리 실행 (일부 PostgreSQL 버전에서 다중 ADD COLUMN IF NOT EXISTS 미지원)
+        await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS totp_secret VARCHAR(64)`);
+        await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS totp_enabled BOOLEAN NOT NULL DEFAULT FALSE`);
         logger.info('DB 마이그레이션 완료 (2FA 컬럼)');
     } catch (err) {
         logger.error('DB 마이그레이션 실패', err);
     }
 }
 
-runMigrations();
-
-httpServer.listen(PORT, () => {
+httpServer.listen(PORT, async () => {
+    await runMigrations();
     console.clear();
     logger.info('');
     logger.info(`클라우드 TODO 백엔드 시작 (포트: ${PORT})`);

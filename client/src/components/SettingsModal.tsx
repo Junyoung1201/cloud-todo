@@ -33,7 +33,6 @@ export default function SettingsModal({ isOpen, onClose, onDeleteAccount }: Sett
     const [twoFactorQrCode, setTwoFactorQrCode] = useState('');
     const [twoFactorCode, setTwoFactorCode] = useState('');
     const [twoFactorError, setTwoFactorError] = useState('');
-    const [twoFactorSuccess, setTwoFactorSuccess] = useState('');
 
     if (!isOpen) return null;
 
@@ -94,7 +93,6 @@ export default function SettingsModal({ isOpen, onClose, onDeleteAccount }: Sett
 
     const handleSetup2FA = async () => {
         setTwoFactorError('');
-        setTwoFactorSuccess('');
         try {
             const response = await api.post('/auth/2fa/setup');
             setTwoFactorSecret(response.data.secret);
@@ -112,7 +110,6 @@ export default function SettingsModal({ isOpen, onClose, onDeleteAccount }: Sett
         try {
             await api.post('/auth/2fa/enable', { secret: twoFactorSecret, code: twoFactorCode });
             dispatch(setCredentials({ user: { ...user!, twoFactorEnabled: true } }));
-            setTwoFactorSuccess('2차 인증이 활성화되었습니다.');
             setTwoFactorStep('idle');
             setTwoFactorCode('');
             setTwoFactorSecret('');
@@ -129,7 +126,6 @@ export default function SettingsModal({ isOpen, onClose, onDeleteAccount }: Sett
         try {
             await api.post('/auth/2fa/disable', { code: twoFactorCode });
             dispatch(setCredentials({ user: { ...user!, twoFactorEnabled: false } }));
-            setTwoFactorSuccess('2차 인증이 비활성화되었습니다.');
             setTwoFactorStep('idle');
             setTwoFactorCode('');
         } catch (err: any) {
@@ -244,7 +240,6 @@ export default function SettingsModal({ isOpen, onClose, onDeleteAccount }: Sett
                         {twoFactorStep === 'idle' && (
                             <>
                                 {twoFactorError && <div className="error-message">{twoFactorError}</div>}
-                                {twoFactorSuccess && <div className="success-message">{twoFactorSuccess}</div>}
                                 <p className="two-factor-status">
                                     {user?.twoFactorEnabled
                                         ? <span className="two-factor-on">2차 인증이 활성화되어 있어요.</span>
@@ -254,7 +249,7 @@ export default function SettingsModal({ isOpen, onClose, onDeleteAccount }: Sett
                                 {user?.twoFactorEnabled ? (
                                     <button
                                         className="btn-two-factor-disable"
-                                        onClick={() => { setTwoFactorStep('disable'); setTwoFactorError(''); setTwoFactorSuccess(''); setTwoFactorCode(''); }}
+                                        onClick={() => { setTwoFactorStep('disable'); setTwoFactorError(''); setTwoFactorCode(''); }}
                                     >
                                         2차 인증 비활성화
                                     </button>
