@@ -68,8 +68,9 @@ export default function TodoItem({ todo }: TodoItemProps) {
     setIsEditing(true);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
       handleEdit();
     } else if (e.key === 'Escape') {
       handleCancel();
@@ -100,16 +101,26 @@ export default function TodoItem({ todo }: TodoItemProps) {
       />
       
       {isEditing ? (
-        <input
-          type="text"
+        <textarea
           value={editTitle}
-          onChange={(e) => setEditTitle(e.target.value)}
+          onChange={(e) => {
+            setEditTitle(e.target.value);
+            e.target.style.height = 'auto';
+            e.target.style.height = e.target.scrollHeight + 'px';
+          }}
           onKeyDown={handleKeyDown}
-          maxLength={1000}
+          ref={(el) => {
+            if (el) {
+              el.style.height = 'auto';
+              el.style.height = el.scrollHeight + 'px';
+            }
+          }}
+          maxLength={500}
           className="todo-edit-input"
           autoFocus
           spellCheck={false}
           autoComplete="off"
+          rows={1}
         />
       ) : (
         <span className="todo-title" onDoubleClick={handleDoubleClick}>{todo.title}</span>

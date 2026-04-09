@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { authenticator } from 'otplib';
+import qrcode from 'qrcode';
 import pool from '../config/database';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '../constants/messages';
 import logger from '../utils/logger';
@@ -61,7 +63,7 @@ router.post('/register', async (req, res) => {
         });
 
         logger.info(`새 사용자 등록: ${user.email} (ID: ${user.id})`);
-        res.status(201).json({ user });
+        res.status(201).json({ user: { ...user, twoFactorEnabled: false } });
 
     } catch (error) {
         logger.error('회원가입 중 오류 발생', error);
@@ -102,6 +104,16 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ error: ERROR_MESSAGES.AUTH.INVALID_CREDENTIALS });
         }
 
+        // 2FA가 활성화된 경우 임시 토큰 발급 후 2FA 검증 요구
+        if (user.totp_enabled) {
+            const tempToken = jwt.sign(
+                { userId: user.id, twoFactorPending: true },
+                process.env.JWT_SECRET as string,
+                { expiresIn: '5m' }
+            );
+            return res.json({ requiresTwoFactor: true, tempToken });
+        }
+
         // 로그인 성공 -> 엑세스 토큰 발급
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET as string, {
             expiresIn: '7d'
@@ -117,7 +129,7 @@ router.post('/login', async (req, res) => {
 
         logger.info(`사용자 로그인: ${user.email} (ID: ${user.id})`);
         res.json({
-            user: { id: user.id, email: user.email, username: user.username }
+            user: { id: user.id, email: user.email, username: user.username, twoFactorEnabled: user.totp_enabled }
         });
     } catch (error) {
         logger.error('로그인 중 오류 발생', error);
@@ -178,12 +190,13 @@ router.put('/update-email', async (req, res) => {
 
         // 이메일 업데이트
         const result = await pool.query(
-            'UPDATE users SET email = $1 WHERE id = $2 RETURNING id, email, username',
+            'UPDATE users SET email = $1 WHERE id = $2 RETURNING id, email, username, totp_enabled',
             [email, decoded.userId]
         );
 
         logger.info(`이메일 변경: 사용자 ID ${decoded.userId}, 새 이메일 ${email}`);
-        res.json({ user: result.rows[0] });
+        const updatedUser = result.rows[0];
+        res.json({ user: { id: updatedUser.id, email: updatedUser.email, username: updatedUser.username, twoFactorEnabled: updatedUser.totp_enabled } });
     } catch (error) {
         logger.error('이메일 변경 중 오류 발생', error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
@@ -235,6 +248,153 @@ router.put('/update-password', async (req, res) => {
         res.json({ message: SUCCESS_MESSAGES.AUTH.PASSWORD_CHANGED });
     } catch (error) {
         logger.error('비밀번호 변경 중 오류 발생', error);
+        res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
+    }
+});
+
+//
+//  2FA 설정 시작 - secret 생성 및 QR 코드 반환
+//
+router.post('/2fa/setup', async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) return res.status(401).json({ error: ERROR_MESSAGES.COMMON.ACCESS_TOKEN_REQUIRED });
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { userId: number };
+        const result = await pool.query('SELECT * FROM users WHERE id = $1', [decoded.userId]);
+        const user = result.rows[0];
+
+        if (user.totp_enabled) {
+            return res.status(400).json({ error: ERROR_MESSAGES.AUTH.TWO_FACTOR_ALREADY_ENABLED });
+        }
+
+        const secret = authenticator.generateSecret();
+        const otpauth = authenticator.keyuri(user.email, '클라우드 TODO', secret);
+        const qrCodeDataUrl = await qrcode.toDataURL(otpauth);
+
+        // secret은 아직 DB에 저장하지 않음 (enable 시 저장)
+        res.json({ secret, qrCodeDataUrl });
+    } catch (error) {
+        logger.error('2FA 설정 중 오류 발생', error);
+        res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
+    }
+});
+
+//
+//  2FA 활성화하기 - 코드 검증 후 secret 저장
+//
+router.post('/2fa/enable', async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) return res.status(401).json({ error: ERROR_MESSAGES.COMMON.ACCESS_TOKEN_REQUIRED });
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { userId: number };
+        const { secret, code } = req.body;
+
+        if (!secret || !code) {
+            return res.status(400).json({ error: ERROR_MESSAGES.AUTH.TWO_FACTOR_INVALID_CODE });
+        }
+
+        const isValid = authenticator.verify({ token: code, secret });
+        if (!isValid) {
+            return res.status(400).json({ error: ERROR_MESSAGES.AUTH.TWO_FACTOR_INVALID_CODE });
+        }
+
+        await pool.query(
+            'UPDATE users SET totp_secret = $1, totp_enabled = TRUE WHERE id = $2',
+            [secret, decoded.userId]
+        );
+
+        logger.info(`2FA 활성화: 사용자 ID ${decoded.userId}`);
+        res.json({ message: SUCCESS_MESSAGES.AUTH.TWO_FACTOR_ENABLED, twoFactorEnabled: true });
+    } catch (error) {
+        logger.error('2FA 활성화 중 오류 발생', error);
+        res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
+    }
+});
+
+//
+//  2FA 비활성화
+//
+router.post('/2fa/disable', async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) return res.status(401).json({ error: ERROR_MESSAGES.COMMON.ACCESS_TOKEN_REQUIRED });
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { userId: number };
+        const { code } = req.body;
+
+        const result = await pool.query('SELECT * FROM users WHERE id = $1', [decoded.userId]);
+        const user = result.rows[0];
+
+        if (!user.totp_enabled) {
+            return res.status(400).json({ error: ERROR_MESSAGES.AUTH.TWO_FACTOR_NOT_ENABLED });
+        }
+
+        const isValid = authenticator.verify({ token: code, secret: user.totp_secret });
+        if (!isValid) {
+            return res.status(400).json({ error: ERROR_MESSAGES.AUTH.TWO_FACTOR_INVALID_CODE });
+        }
+
+        await pool.query(
+            'UPDATE users SET totp_secret = NULL, totp_enabled = FALSE WHERE id = $1',
+            [decoded.userId]
+        );
+
+        logger.info(`2FA 비활성화: 사용자 ID ${decoded.userId}`);
+        res.json({ message: SUCCESS_MESSAGES.AUTH.TWO_FACTOR_DISABLED, twoFactorEnabled: false });
+    } catch (error) {
+        logger.error('2FA 비활성화 중 오류 발생', error);
+        res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
+    }
+});
+
+//
+//  로그인 2FA 검증 - 임시 토큰 + 코드로 최종 로그인
+//
+router.post('/2fa/verify-login', async (req, res) => {
+    try {
+        const { tempToken, code } = req.body;
+
+        if (!tempToken || !code) {
+            return res.status(400).json({ error: ERROR_MESSAGES.AUTH.TWO_FACTOR_INVALID_CODE });
+        }
+
+        let decoded: { userId: number; twoFactorPending?: boolean };
+        try {
+            decoded = jwt.verify(tempToken, process.env.JWT_SECRET as string) as { userId: number; twoFactorPending?: boolean };
+        } catch {
+            return res.status(401).json({ error: ERROR_MESSAGES.AUTH.INVALID_CREDENTIALS });
+        }
+
+        if (!decoded.twoFactorPending) {
+            return res.status(401).json({ error: ERROR_MESSAGES.AUTH.INVALID_CREDENTIALS });
+        }
+
+        const result = await pool.query('SELECT * FROM users WHERE id = $1', [decoded.userId]);
+        const user = result.rows[0];
+
+        if (!user || !user.totp_enabled) {
+            return res.status(401).json({ error: ERROR_MESSAGES.AUTH.INVALID_CREDENTIALS });
+        }
+
+        const isValid = authenticator.verify({ token: code, secret: user.totp_secret });
+        if (!isValid) {
+            return res.status(400).json({ error: ERROR_MESSAGES.AUTH.TWO_FACTOR_INVALID_CODE });
+        }
+
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET as string, { expiresIn: '7d' });
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
+
+        logger.info(`2FA 로그인 성공: ${user.email} (ID: ${user.id})`);
+        res.json({ user: { id: user.id, email: user.email, username: user.username, twoFactorEnabled: true } });
+    } catch (error) {
+        logger.error('2FA 로그인 검증 중 오류 발생', error);
         res.status(500).json({ error: ERROR_MESSAGES.COMMON.SERVER_ERROR });
     }
 });

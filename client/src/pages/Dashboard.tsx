@@ -379,7 +379,7 @@ export default function Dashboard() {
                   type="text"
                   value={newListTitle}
                   onChange={(e) => setNewListTitle(e.target.value)}
-                  maxLength={255}
+                  maxLength={50}
                   onBlur={() => {
                     if (!newListTitle.trim()) setIsCreatingList(false);
                   }}
@@ -409,7 +409,7 @@ export default function Dashboard() {
                   type="text"
                   value={newTodoTitle}
                   onChange={(e) => setNewTodoTitle(e.target.value)}
-                  maxLength={1000}
+                  maxLength={500}
                   placeholder="새로운 할 일을 추가하세요..."
                   className="todo-input"
                   spellCheck={false}

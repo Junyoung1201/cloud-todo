@@ -105,7 +105,7 @@
     font-size: 18px;
     font-weight: 600;
     color: #2D3748;
-    margin: 0 0 16px 0;
+    margin-bottom: 5px;
 }
 
 .settings-section .form-group {
@@ -212,6 +212,130 @@
 .btn-delete-account:hover {
     background-color: #FEE2E2;
     color: #B91C1C;
+}
+
+/* 2FA Styles */
+.two-factor-status {
+    font-size: 18px;
+    color: #4A5568;
+    margin-bottom: 15px;
+}
+
+.two-factor-on {
+    color: #059669;
+    font-weight: 600;
+}
+
+.two-factor-off {
+    color: #9CA3AF;
+    font-weight: 600;
+}
+
+.btn-two-factor-enable {
+    padding: 10px 20px;
+    background-color: #EFF6FF;
+    color: #2563EB;
+    border: 1px solid #BFDBFE;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-two-factor-enable:hover {
+    background-color: #DBEAFE;
+    color: #1D4ED8;
+}
+
+.btn-two-factor-disable {
+    padding: 10px 20px;
+    background-color: #FEF2F2;
+    color: #DC2626;
+    border: 1px solid #FECACA;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-two-factor-disable:hover {
+    background-color: #FEE2E2;
+    color: #B91C1C;
+}
+
+.btn-secondary {
+    padding: 10px 20px;
+    background-color: #F3F4F6;
+    color: #6B7280;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #E5E7EB;
+    color: #4B5563;
+}
+
+.two-factor-setup {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.two-factor-guide {
+    font-size: 14px;
+    color: #4A5568;
+    margin: 0;
+}
+
+.two-factor-qr {
+    display: flex;
+    justify-content: center;
+}
+
+.two-factor-qr img {
+    width: 180px;
+    height: 180px;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 8px;
+    background: white;
+}
+
+.two-factor-manual {
+    font-size: 13px;
+    color: #718096;
+}
+
+.two-factor-manual summary {
+    cursor: pointer;
+    color: #2563EB;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.two-factor-secret {
+    display: block;
+    background: #F7FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: monospace;
+    font-size: 13px;
+    word-break: break-all;
+    color: #2D3748;
+    margin-top: 6px;
+}
+
+.two-factor-actions {
+    display: flex;
+    gap: 8px;
 }
 
 /* Responsive Design */
@@ -385,4 +509,63 @@ body.dark-mode .btn-delete-account {
 body.dark-mode .btn-delete-account:hover {
     background-color: #991B1B;
     color: #FEE2E2;
+}
+
+body.dark-mode .two-factor-status {
+    color: #A0AEC0;
+}
+
+body.dark-mode .two-factor-guide {
+    color: #A0AEC0;
+}
+
+body.dark-mode .btn-two-factor-enable {
+    background-color: #1E3A5F;
+    color: #93C5FD;
+    border-color: #1D4ED8;
+}
+
+body.dark-mode .btn-two-factor-enable:hover {
+    background-color: #1D4ED8;
+    color: #EFF6FF;
+}
+
+body.dark-mode .btn-two-factor-disable {
+    background-color: #7F1D1D;
+    color: #FCA5A5;
+    border-color: #991B1B;
+}
+
+body.dark-mode .btn-two-factor-disable:hover {
+    background-color: #991B1B;
+    color: #FEE2E2;
+}
+
+body.dark-mode .btn-secondary {
+    background-color: #374151;
+    color: #D1D5DB;
+}
+
+body.dark-mode .btn-secondary:hover {
+    background-color: #4B5563;
+    color: #F9FAFB;
+}
+
+body.dark-mode .two-factor-qr img {
+    background: #E2E8F0;
+    border-color: #4A5568;
+}
+
+body.dark-mode .two-factor-secret {
+    background: #1A202C;
+    border-color: #4A5568;
+    color: #E2E8F0;
+}
+
+body.dark-mode .two-factor-manual summary {
+    color: #93C5FD;
+}
+
+body.dark-mode .two-factor-manual {
+    color: #A0AEC0;
 }

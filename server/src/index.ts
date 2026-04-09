@@ -11,6 +11,7 @@ import { authSocket } from './middleware/auth';
 import { setupSocketHandlers } from './socket/handlers';
 import logger from './utils/logger';
 import path from 'path';
+import pool from './config/database';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -46,6 +47,21 @@ io.use(authSocket);
 setupSocketHandlers(io);
 
 const PORT = process.env.PORT as string;
+
+async function runMigrations() {
+    try {
+        await pool.query(`
+            ALTER TABLE users
+            ADD COLUMN IF NOT EXISTS totp_secret VARCHAR(64),
+            ADD COLUMN IF NOT EXISTS totp_enabled BOOLEAN DEFAULT FALSE NOT NULL
+        `);
+        logger.info('DB 마이그레이션 완료 (2FA 컬럼)');
+    } catch (err) {
+        logger.error('DB 마이그레이션 실패', err);
+    }
+}
+
+runMigrations();
 
 httpServer.listen(PORT, () => {
     console.clear();
